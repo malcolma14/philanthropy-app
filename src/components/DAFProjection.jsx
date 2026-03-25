@@ -12,7 +12,7 @@ function SliderInput({ label, value, min, max, step, onChange, format }) {
   return (
     <div>
       <div className="flex justify-between items-center mb-2">
-        <label className="text-sm font-semibold text-navy-800">{label}</label>
+        <label className="text-sm font-semibold text-ig-dark">{label}</label>
         <span className="text-sm font-bold text-navy-900 tabular-nums bg-navy-100 px-2 py-0.5 rounded-md">
           {format ? format(value) : value}
         </span>
@@ -24,7 +24,7 @@ function SliderInput({ label, value, min, max, step, onChange, format }) {
         step={step}
         value={value}
         onChange={(e) => onChange(parseFloat(e.target.value))}
-        className="w-full h-2 bg-navy-200 rounded-lg appearance-none cursor-pointer accent-navy-700"
+        className="w-full h-2 bg-navy-200 rounded-lg appearance-none cursor-pointer accent-ig-blue"
       />
       <div className="flex justify-between text-xs text-navy-400 mt-1">
         <span>{format ? format(min) : min}</span>
@@ -93,9 +93,9 @@ export default function DAFProjection({ initialValue: propInitialValue }) {
   return (
     <div className="space-y-6">
       <div className="bg-white rounded-2xl shadow-sm border border-navy-100 p-6 md:p-8">
-        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-4">
           <div>
-            <h2 className="text-xl font-bold text-navy-900">Donor-Advised Fund Projection</h2>
+            <h2 className="text-xl font-bold text-ig-dark">What a Donor-Advised Fund could look like over time</h2>
             <p className="text-sm text-navy-500 mt-1">
               How your gift keeps giving — year after year, decade after decade.
             </p>
@@ -104,6 +104,12 @@ export default function DAFProjection({ initialValue: propInitialValue }) {
             <span>⚖️</span>
             <span>5% mandatory distribution</span>
           </div>
+        </div>
+
+        {/* DAF callout */}
+        <div className="mb-6 p-3 rounded-xl bg-blue-50 border border-blue-100 text-sm text-ig-dark font-medium">
+          A DAF lets you give now, receive the tax receipt now, and distribute to charities on your own
+          schedule — sometimes over decades.
         </div>
 
         {/* Controls */}
@@ -162,10 +168,11 @@ export default function DAFProjection({ initialValue: propInitialValue }) {
             { label: 'Remaining fund value',     value: formatCurrency(finalFundValue),  icon: '🏦' },
             { label: 'Total philanthropic impact',value: formatCurrency(totalImpact),    icon: '🌟', highlight: true },
           ].map(({ label, value, icon, highlight }) => (
-            <div key={label} className={`rounded-xl p-3 text-center ${highlight ? 'bg-navy-800 text-white' : 'bg-navy-50'}`}>
+            <div key={label} className={`rounded-xl p-3 text-center ${highlight ? 'text-white' : 'bg-navy-50'}`}
+              style={highlight ? { backgroundColor: '#001E60' } : {}}>
               <p className="text-lg mb-1">{icon}</p>
               <p className={`text-xl font-extrabold tabular-nums ${highlight ? 'text-white' : 'text-navy-800'}`}>{value}</p>
-              <p className={`text-xs mt-1 ${highlight ? 'text-navy-200' : 'text-navy-500'}`}>{label}</p>
+              <p className={`text-xs mt-1 ${highlight ? 'text-white/70' : 'text-navy-500'}`}>{label}</p>
             </div>
           ))}
         </div>
@@ -179,12 +186,12 @@ export default function DAFProjection({ initialValue: propInitialValue }) {
             <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
               <defs>
                 <linearGradient id="optimisticGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%"  stopColor="#1B4F72" stopOpacity={0.15} />
-                  <stop offset="95%" stopColor="#1B4F72" stopOpacity={0.02} />
+                  <stop offset="5%"  stopColor="#0072CE" stopOpacity={0.15} />
+                  <stop offset="95%" stopColor="#0072CE" stopOpacity={0.02} />
                 </linearGradient>
                 <linearGradient id="fundGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%"  stopColor="#1B4F72" stopOpacity={0.4} />
-                  <stop offset="95%" stopColor="#1B4F72" stopOpacity={0.05} />
+                  <stop offset="5%"  stopColor="#001E60" stopOpacity={0.4} />
+                  <stop offset="95%" stopColor="#001E60" stopOpacity={0.05} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
@@ -196,8 +203,8 @@ export default function DAFProjection({ initialValue: propInitialValue }) {
               />
               <Tooltip content={<CustomTooltip />} />
               <Legend wrapperStyle={{ fontSize: 12 }} />
-              <Area type="monotone" dataKey="optimistic" name="Optimistic (7%)" stroke="#5ba4cf" strokeWidth={1} strokeDasharray="4 2" fill="url(#optimisticGrad)" />
-              <Area type="monotone" dataKey="fundValue"  name={`Selected (${(returnRate*100).toFixed(1)}%)`} stroke="#1B4F72" strokeWidth={2.5} fill="url(#fundGrad)" />
+              <Area type="monotone" dataKey="optimistic" name="Optimistic (7%)" stroke="#8DD0EF" strokeWidth={1} strokeDasharray="4 2" fill="url(#optimisticGrad)" />
+              <Area type="monotone" dataKey="fundValue"  name={`Selected (${(returnRate*100).toFixed(1)}%)`} stroke="#001E60" strokeWidth={2.5} fill="url(#fundGrad)" />
               <Area type="monotone" dataKey="conservative" name="Conservative (4%)" stroke="#9fb3c8" strokeWidth={1} strokeDasharray="4 2" fill="none" />
             </AreaChart>
           </ResponsiveContainer>
@@ -219,8 +226,8 @@ export default function DAFProjection({ initialValue: propInitialValue }) {
               />
               <Tooltip content={<CustomTooltip />} />
               <Legend wrapperStyle={{ fontSize: 12 }} />
-              <Bar dataKey="distribution" name="Annual distribution (5%)" fill="#C8870D" radius={[3, 3, 0, 0]} />
-              <Bar dataKey="cumulative"   name="Cumulative distributions" fill="#f6c84b" radius={[3, 3, 0, 0]} />
+              <Bar dataKey="distribution" name="Annual distribution (5%)" fill="#0072CE" radius={[3, 3, 0, 0]} />
+              <Bar dataKey="cumulative"   name="Cumulative distributions" fill="#8DD0EF" radius={[3, 3, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -233,7 +240,7 @@ export default function DAFProjection({ initialValue: propInitialValue }) {
           </summary>
           <div className="mt-4 overflow-x-auto rounded-xl border border-navy-200">
             <table className="w-full text-xs text-navy-700 min-w-[520px]">
-              <thead className="bg-navy-800 text-white">
+              <thead className="text-white" style={{ backgroundColor: '#001E60' }}>
                 <tr>
                   {['Year', 'Starting Value', 'Investment Gain', 'Annual Distribution (5%)', 'Ending Value', 'Cumulative Distributed'].map(h => (
                     <th key={h} className="px-3 py-2 text-right first:text-left font-semibold whitespace-nowrap">{h}</th>
@@ -258,8 +265,8 @@ export default function DAFProjection({ initialValue: propInitialValue }) {
       </div>
 
       {/* Info Box */}
-      <div className="bg-navy-50 rounded-2xl border border-navy-200 p-5 text-sm text-navy-700">
-        <h3 className="font-bold text-navy-800 mb-2">What is a Donor-Advised Fund (DAF)?</h3>
+      <div className="bg-blue-50 rounded-2xl border border-blue-100 p-5 text-sm text-navy-700">
+        <h3 className="font-bold text-ig-dark mb-2">What is a Donor-Advised Fund (DAF)?</h3>
         <p className="mb-2">
           A DAF is a registered charitable giving account managed by a sponsoring organization (e.g., Fidelity
           Charitable, a community foundation, or a bank-affiliated foundation). You make an irrevocable contribution,

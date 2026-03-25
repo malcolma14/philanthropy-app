@@ -17,13 +17,18 @@ function Divider() {
 
 function ScenarioCard({ title, badge, badgeColor, icon, rows, footerLabel, footerValue, footerColor, highlight }) {
   return (
-    <div className={`rounded-2xl border-2 p-5 flex flex-col gap-1 ${highlight ? 'border-navy-700 shadow-md' : 'border-navy-200'}`}>
+    <div
+      className={`rounded-2xl border-2 p-5 flex flex-col gap-1 ${highlight ? 'shadow-md' : 'border-navy-200'}`}
+      style={highlight ? { borderColor: '#0072CE' } : {}}
+    >
       <div className="flex items-center gap-2 mb-3">
         <span className="text-2xl">{icon}</span>
         <div>
           <p className="font-bold text-navy-900 leading-tight">{title}</p>
           {badge && (
-            <span className={`inline-block text-xs font-semibold px-2 py-0.5 rounded-full mt-0.5 ${badgeColor}`}>
+            <span
+              className={`inline-block text-xs font-semibold px-2 py-0.5 rounded-full mt-0.5 ${badgeColor}`}
+            >
               {badge}
             </span>
           )}
@@ -39,7 +44,7 @@ function ScenarioCard({ title, badge, badgeColor, icon, rows, footerLabel, foote
         )}
       </div>
       {footerLabel && (
-        <div className={`mt-3 pt-3 border-t-2 border-dashed border-navy-200 flex justify-between items-center`}>
+        <div className="mt-3 pt-3 border-t-2 border-dashed border-navy-200 flex justify-between items-center">
           <span className="text-sm font-bold text-navy-800">{footerLabel}</span>
           <span className={`text-base font-extrabold ${footerColor || 'text-navy-900'}`}>{footerValue}</span>
         </div>
@@ -54,7 +59,7 @@ export default function ResultsSection({ results, donationType }) {
       <div className="bg-white rounded-2xl shadow-sm border border-navy-100 p-8 text-center">
         <div className="text-5xl mb-4">🍁</div>
         <p className="text-navy-500 text-sm">
-          Fill in your details above to see your personalized tax savings analysis.
+          Fill in your details above to see your personalised tax savings analysis.
         </p>
       </div>
     );
@@ -102,7 +107,7 @@ export default function ResultsSection({ results, donationType }) {
     <div className="space-y-6">
       {/* Marginal Rate Summary */}
       <div className="bg-white rounded-2xl shadow-sm border border-navy-100 p-5 md:p-6">
-        <h2 className="text-xl font-bold text-navy-900 mb-4">Your Tax Profile</h2>
+        <h2 className="text-xl font-bold text-ig-dark mb-4">Your Tax Profile</h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {[
             { label: 'Federal marginal rate',   value: formatPercent(federalMarginalRate) },
@@ -110,8 +115,8 @@ export default function ResultsSection({ results, donationType }) {
             { label: 'Combined marginal rate',  value: formatPercent(combinedMarginalRate) },
             { label: 'Effective donation credit', value: formatPercent(cashDonationCredit / donationFMV) },
           ].map(({ label, value }) => (
-            <div key={label} className="bg-navy-50 rounded-xl p-3 text-center">
-              <p className="text-2xl font-extrabold text-navy-800">{value}</p>
+            <div key={label} className="bg-blue-50 rounded-xl p-3 text-center">
+              <p className="text-2xl font-extrabold text-ig-dark">{value}</p>
               <p className="text-xs text-navy-500 mt-1 leading-tight">{label}</p>
             </div>
           ))}
@@ -120,7 +125,7 @@ export default function ResultsSection({ results, donationType }) {
 
       {/* Scenario Cards */}
       <div>
-        <h2 className="text-xl font-bold text-navy-900 mb-4">Donation Comparison</h2>
+        <h2 className="text-xl font-bold text-ig-dark mb-4">What each strategy costs you after tax</h2>
         <div className={`grid gap-4 ${showSecurities ? 'grid-cols-1 lg:grid-cols-3' : 'grid-cols-1 sm:grid-cols-2 max-w-2xl'}`}>
 
           {/* Cash */}
@@ -138,7 +143,7 @@ export default function ResultsSection({ results, donationType }) {
             <ScenarioCard
               title="Donate Securities"
               badge="Best option"
-              badgeColor="bg-emerald-100 text-emerald-800"
+              badgeColor="bg-ig-blue text-white"
               icon="📈"
               highlight={true}
               rows={secRows}
@@ -192,7 +197,7 @@ export default function ResultsSection({ results, donationType }) {
 
       {/* Disclaimer */}
       <p className="text-xs text-navy-400 text-center leading-relaxed">
-        For illustrative purposes only. Based on 2024 federal and provincial tax rates. Does not account for
+        For illustrative purposes only. Based on 2026 federal and provincial tax rates. Does not account for
         surtaxes, alternative minimum tax, or other credits. Consult a qualified tax professional before making
         financial decisions.
       </p>

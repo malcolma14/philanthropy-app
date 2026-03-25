@@ -1,51 +1,60 @@
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { formatCurrency, formatPercent, calculateDAFProjection } from './calculations';
-import { PROVINCES } from './taxData';
+import { PROVINCES, LAST_VERIFIED } from './taxData';
 
-const NAVY  = [27, 79, 114];    // #1B4F72
-const GOLD  = [200, 135, 13];   // #C8870D
-const LIGHT = [240, 244, 248];  // light bg
-const WHITE = [255, 255, 255];
-const TEXT  = [44, 62, 80];
-const GRAY  = [100, 116, 139];
+const IG_DARK  = [0, 30, 96];      // #001E60
+const IG_BLUE  = [0, 114, 206];    // #0072CE
+const IG_LIGHT = [141, 208, 239];  // #8DD0EF
+const LIGHT    = [235, 245, 255];  // light blue bg
+const WHITE    = [255, 255, 255];
+const TEXT     = [44, 62, 80];
+const GRAY     = [100, 116, 139];
+
+const HEADER_TEXT   = 'Adam Malcolm, CFP, MFA-P  |  IG Wealth Management  |  Strategic Generosity Blueprint\u2122';
+const FOOTER_DISC   = 'This report is for educational and illustrative purposes only and does not constitute financial or tax advice. Consult a qualified advisor for your specific situation.  |  successfultogenerous.com';
+const FOOTER_RATES  = `Tax rates sourced from the Canada Revenue Agency (canada.ca/en/revenue-agency). Last verified: ${LAST_VERIFIED}. Rates are updated annually \u2014 confirm current-year rates with your advisor.`;
 
 function addHeader(doc, pageWidth) {
-  doc.setFillColor(...NAVY);
+  doc.setFillColor(...IG_DARK);
   doc.rect(0, 0, pageWidth, 26, 'F');
 
   doc.setTextColor(...WHITE);
-  doc.setFontSize(16);
+  doc.setFontSize(10);
   doc.setFont('helvetica', 'bold');
-  doc.text('Canadian Philanthropy Tax Report', 15, 11);
+  doc.text(HEADER_TEXT, pageWidth / 2, 11, { align: 'center' });
 
   doc.setFontSize(8);
   doc.setFont('helvetica', 'normal');
-  doc.text(`Generated: ${new Date().toLocaleDateString('en-CA', { year: 'numeric', month: 'long', day: 'numeric' })}`, 15, 18);
+  doc.setTextColor(...IG_LIGHT);
+  doc.text(`Generated: ${new Date().toLocaleDateString('en-CA', { year: 'numeric', month: 'long', day: 'numeric' })}`, 15, 19);
 
-  doc.setTextColor(...GOLD);
-  doc.setFontSize(10);
+  doc.setTextColor(...IG_LIGHT);
+  doc.setFontSize(8);
   doc.setFont('helvetica', 'bold');
-  doc.text('Based on 2024 federal & provincial tax rates', pageWidth - 15, 14, { align: 'right' });
+  doc.text('Based on 2026 federal & provincial tax rates', pageWidth - 15, 19, { align: 'right' });
 }
 
 function addFooter(doc, pageNumber, pageWidth, pageHeight) {
-  doc.setFontSize(7);
+  const footerY = pageHeight - 16;
+
+  doc.setFillColor(245, 248, 252);
+  doc.rect(0, footerY - 4, pageWidth, 20, 'F');
+
+  doc.setFontSize(6.5);
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(...GRAY);
-  doc.text(
-    'For illustrative purposes only. Consult a qualified tax professional before making financial decisions.',
-    pageWidth / 2, pageHeight - 8, { align: 'center' }
-  );
-  doc.text(`Page ${pageNumber}`, pageWidth - 15, pageHeight - 8, { align: 'right' });
+  doc.text(FOOTER_DISC, pageWidth / 2, footerY + 1, { align: 'center', maxWidth: pageWidth - 30 });
+  doc.text(FOOTER_RATES, pageWidth / 2, footerY + 6, { align: 'center', maxWidth: pageWidth - 30 });
+  doc.text(`Page ${pageNumber}`, pageWidth - 15, footerY + 1, { align: 'right' });
 }
 
 function sectionTitle(doc, text, y) {
-  doc.setFillColor(...NAVY);
+  doc.setFillColor(...IG_BLUE);
   doc.rect(15, y, 5, 6, 'F');
   doc.setFontSize(12);
   doc.setFont('helvetica', 'bold');
-  doc.setTextColor(...NAVY);
+  doc.setTextColor(...IG_DARK);
   doc.text(text, 22, y + 5);
   return y + 12;
 }
@@ -79,7 +88,7 @@ export function generatePDF({ name, email, inputs, results, dafReturnRate = 0.06
     startY: y,
     margin: { left: 15, right: 15 },
     styles: { fontSize: 9, cellPadding: 3 },
-    headStyles: { fillColor: NAVY, textColor: WHITE, fontStyle: 'bold' },
+    headStyles: { fillColor: IG_DARK, textColor: WHITE, fontStyle: 'bold' },
     alternateRowStyles: { fillColor: LIGHT },
     head: [['Parameter', 'Value']],
     body: [
@@ -110,13 +119,13 @@ export function generatePDF({ name, email, inputs, results, dafReturnRate = 0.06
     startY: y,
     margin: { left: 15, right: 15 },
     styles: { fontSize: 8.5, cellPadding: 3 },
-    headStyles: { fillColor: NAVY, textColor: WHITE, fontStyle: 'bold' },
+    headStyles: { fillColor: IG_DARK, textColor: WHITE, fontStyle: 'bold' },
     columnStyles: {
       0: { fontStyle: 'bold' },
-      2: { fillColor: [232, 245, 233], fontStyle: 'bold' }, // highlight securities column
+      2: { fillColor: [232, 245, 233], fontStyle: 'bold' },
     },
     alternateRowStyles: { fillColor: LIGHT },
-    head: [['', 'Cash Donation', 'Donate Securities ✓ Best', 'Sell First, Donate Cash']],
+    head: [['', 'Cash Donation', 'Donate Securities \u2713 Best', 'Sell First, Donate Cash']],
     body: comparisonBody,
   });
   y = doc.lastAutoTable.finalY + 8;
@@ -129,7 +138,7 @@ export function generatePDF({ name, email, inputs, results, dafReturnRate = 0.06
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(27, 94, 32);
     doc.text(
-      `💡 By donating securities instead of cash, you save ${formatCurrency(results.savingsVsCash)} — ${formatPercent(results.savingsVsCash / inputs.donationFMV)} of your gift value.`,
+      `\uD83D\uDCA1 By donating securities instead of cash, you save ${formatCurrency(results.savingsVsCash)} \u2014 ${formatPercent(results.savingsVsCash / inputs.donationFMV)} of your gift value.`,
       pageWidth / 2, y + 9, { align: 'center' }
     );
     y += 20;
@@ -170,7 +179,7 @@ export function generatePDF({ name, email, inputs, results, dafReturnRate = 0.06
     startY: y,
     margin: { left: 15, right: 15 },
     styles: { fontSize: 8, cellPadding: 2.5 },
-    headStyles: { fillColor: NAVY, textColor: WHITE, fontStyle: 'bold' },
+    headStyles: { fillColor: IG_DARK, textColor: WHITE, fontStyle: 'bold' },
     alternateRowStyles: { fillColor: LIGHT },
     head: [['Year', 'Starting Value', 'Investment Gain', 'Distribution (5%)', 'Ending Value', 'Cumulative Distributed']],
     body: projectionBody,
@@ -197,7 +206,7 @@ export function generatePDF({ name, email, inputs, results, dafReturnRate = 0.06
     startY: y,
     margin: { left: 15, right: 15 },
     styles: { fontSize: 9, cellPadding: 3 },
-    headStyles: { fillColor: [200, 135, 13], textColor: WHITE, fontStyle: 'bold' },
+    headStyles: { fillColor: IG_BLUE, textColor: WHITE, fontStyle: 'bold' },
     head: [['DAF Summary', 'Amount']],
     body: summaryData,
     columnStyles: { 1: { halign: 'right', fontStyle: 'bold' } },
@@ -213,16 +222,17 @@ export function generatePDF({ name, email, inputs, results, dafReturnRate = 0.06
   y = 34;
 
   y = sectionTitle(doc, 'Important Disclosures', y);
+
   const disclaimerText = [
     'This report is for illustrative and educational purposes only. It is not tax, legal, or investment advice.',
     '',
-    'Tax calculations are based on 2024 federal and provincial/territorial income tax rates and donation tax credit',
+    'Tax calculations are based on 2026 federal and provincial/territorial income tax rates and donation tax credit',
     'schedules. Actual results may differ due to alternative minimum tax, surtaxes, income-tested benefit',
     'clawbacks, carry-forward amounts, other credits, and other factors not reflected here.',
     '',
-    'Capital gains calculations use a 50% inclusion rate for individuals, which was in effect throughout 2024.',
-    'The 2024 federal budget proposed a 2/3 inclusion rate for gains over $250,000 per individual, but',
-    'implementation was paused. Consult a tax professional for the most current rules.',
+    'Capital gains calculations use a 50% inclusion rate for individuals, which applies in 2026. The 2024 federal',
+    'budget proposed a 2/3 inclusion rate for gains over $250,000 per individual, but implementation was paused.',
+    'Consult a tax professional for the most current rules.',
     '',
     'Donor-Advised Fund projections are hypothetical and assume a constant annual return and distribution rate.',
     'Actual investment returns will vary. The 5% annual distribution is a common minimum but specific terms',
@@ -233,6 +243,10 @@ export function generatePDF({ name, email, inputs, results, dafReturnRate = 0.06
     '',
     'Always consult a qualified Canadian tax professional, financial advisor, or estate planner before making',
     'charitable giving or investment decisions.',
+    '',
+    'Strategic Generosity is a planning approach that integrates tax strategy, investment planning, estate',
+    'planning, and philanthropy into a single, values-aligned financial plan. To explore how these strategies',
+    'apply to your situation, visit successfultogenerous.com or contact Adam Malcolm directly.',
   ];
 
   doc.setFontSize(9);

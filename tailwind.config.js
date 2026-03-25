@@ -7,6 +7,11 @@ export default {
   theme: {
     extend: {
       colors: {
+        ig: {
+          blue:  '#0072CE',  // IG Mid Blue — primary
+          dark:  '#001E60',  // IG Dark Blue — headlines, key accents
+          light: '#8DD0EF',  // IG Light Blue — accent
+        },
         navy: {
           50:  '#f0f4f8',
           100: '#d9e2ec',
@@ -26,7 +31,7 @@ export default {
         }
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['Nunito Sans', 'Calibri', 'sans-serif'],
       },
     },
   },

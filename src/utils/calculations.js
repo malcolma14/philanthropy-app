@@ -3,6 +3,7 @@ import {
   FEDERAL_DONATION_CREDIT_LOW,
   FEDERAL_DONATION_CREDIT_HIGH,
   FEDERAL_DONATION_CREDIT_TOP,
+  FEDERAL_DONATION_CREDIT_TOP_THRESHOLD,
   CAPITAL_GAINS_INCLUSION_RATE,
   PROVINCES,
 } from './taxData';
@@ -70,7 +71,7 @@ export function getCombinedMarginalRate(income, provinceCode) {
  */
 export function getFederalDonationCredit(donationAmount, income) {
   if (donationAmount <= 0) return 0;
-  const topRate = income > 220000 ? FEDERAL_DONATION_CREDIT_TOP : FEDERAL_DONATION_CREDIT_HIGH;
+  const topRate = income > FEDERAL_DONATION_CREDIT_TOP_THRESHOLD ? FEDERAL_DONATION_CREDIT_TOP : FEDERAL_DONATION_CREDIT_HIGH;
   const creditLow  = Math.min(donationAmount, 200) * FEDERAL_DONATION_CREDIT_LOW;
   const creditHigh = Math.max(0, donationAmount - 200) * topRate;
   let credit = creditLow + creditHigh;
